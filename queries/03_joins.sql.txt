@@ -1,0 +1,33 @@
+-- JOINS ENTRE TABELAS
+select
+cus.customer_id,
+cus.first_name,
+cus.last_name,
+pay.payment_id,
+pay.amount,
+cou.country_id,
+cou.country
+from customer cus
+join payment pay on cus.customer_id = pay.payment_id
+join country cou on cus.customer_id = cou.country_id;
+
+select
+cou.code,
+cou.name,
+cit.id,
+cit.name,
+cit.district
+from country cou
+join city cit on cou.code = cit.countrycode
+where cou.code in ('BRA','USA');
+
+-- AGRUPANDO MULTIPLAS TABELAS
+select
+cus.customer_id,
+cus.first_name,
+cus.last_name,
+sum(amount) as total
+from payment
+join customer cus using (customer_id)
+group by customer_id
+order by total desc;

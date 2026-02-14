@@ -1,0 +1,36 @@
+-- Exercícios SQL focados em análise e troubleshooting
+-- Autor: Ricardo Pinheiro
+-- Ambiente: MySQL
+
+-- INSERIR NOVA LINHA EM TABELA
+insert into country
+values
+(default, 'brasil2', '2006-02-15 05:02:19');
+
+insert into actor
+values
+(default, 'Ricardo', 'Pinheiro', '2006-02-15 05:02:19');
+
+-- INSERIR NOVA LINHA EM TABELA COMPATIVEL A ULTIMO DADO INSERIDO
+insert into city
+values
+(default, 'sao paulo2', last_insert_id(),'2006-02-15 05:02:19');
+
+-- INSERIR MULTIPLAS LINHAS
+insert into language
+value
+(default, 'Portuguese', '2006-02-15 05:02:19'),
+(default, 'Spanish', '2006-02-15 05:02:19'),
+(default, 'Polish', '2006-02-15 05:02:19');
+
+-- DELETE
+delete from city
+where city_id = 602;
+
+delete from language
+where language_id in ('12','13','14','15','16','17');
+
+-- UPDATE
+update clientes
+set endereco = 'Rua 5'
+where id = 5;

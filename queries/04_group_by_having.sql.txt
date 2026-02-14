@@ -1,0 +1,28 @@
+-- GROUP BY
+SELECT
+customer_id,
+sum(amount) as total
+from payment
+group by customer_id
+order by total desc;
+
+SELECT
+code,
+name,
+sum(population) as total
+from country
+where code in ('BRA', 'USA')
+group by code;
+
+-- HAVING
+select
+cus.customer_id,
+cus.first_name,
+cus.last_name,
+sum(amount) as total,
+count(amount) as compras
+from payment
+join customer cus using (customer_id)
+group by customer_id
+having total >= 150 and compras >= 38
+order by total ASC;

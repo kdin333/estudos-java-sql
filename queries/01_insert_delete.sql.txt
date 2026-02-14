@@ -1,0 +1,164 @@
+CÓDIGOS SQL
+
+-- INSERIR NOVA LINHA EM TABELA
+insert into country
+values
+ 	(default, 'brasil2', '2006-02-15 05:02:19');
+
+insert into actor
+values
+ 	(default, 'Ricardo', 'Pinheiro', '2006-02-15 05:02:19');
+ 
+
+-- INSERIR NOVA LINHA EM TABELA COMPATIVEL A ULTIMO DADO INSERIDO
+insert into city
+ values
+ 	(default, 'sao paulo2', last_insert_id(),'2006-02-15 05:02:19'); -- last_insert_id() chama o AI para o ultimo valor adicionado
+ 
+-- SQL FUNCTIONS
+select
+ 	max(amount) as 'Maior',
+    min(amount) as 'Menor',
+    avg(amount) as 'Media de Valores',
+    sum(amount) as 'Total de Vendas',
+    count(amount) as 'Número de Vendas'
+from payment
+where staff_id = 2;
+
+-- APAGAR LINHA DA TABELA
+delete from city
+where city_id = 602;
+
+-- ALTER TABLE language AUTO_INCREMENT = 7; <--- REINICIAR CONTAGEM DO AUTO INCREMENT
+-- INSERIR MULTIPLAS LINHAS NA TABELA:
+insert into language
+value
+ 	(default, 'Portuguese', '2006-02-15 05:02:19'),
+ 	(default, 'Spanish', '2006-02-15 05:02:19'),
+ 	(default, 'Polish', '2006-02-15 05:02:19');
+ 
+-- APAGAR MULTIPLAS LINHAS DE UMA TABELA
+delete from language
+where language_id in ('12','13','14','15','16','17');
+
+-- AGRUPAR CLIENTES
+SELECT
+ 	customer_id,
+    sum(amount) as total
+from payment
+group by customer_id -- ESTA FUNÇÃO
+order by total desc;
+
+-- CRIAR NOVA TABELA SELECIONANDO MULTIPLAS TABELAS
+select
+ 	cus.customer_id,
+    cus.first_name,
+    cus.last_name,
+    pay.payment_id,
+ 	pay.amount,
+ 	cou.country_id,
+    cou.country
+from customer cus
+join payment pay on cus.customer_id = pay.payment_id
+join country cou on cus.customer_id = cou.country_id;
+
+select
+ 	cou.code,
+    cou.name,
+    cit.id,
+    cit.name,
+    cit.district
+from country cou
+join city cit on cou.code = cit.countrycode --  relacionar a chave estrangeira da cidade com a chave primária do país.
+where cou.code in ('BRA','USA');
+
+-- AGRUPAR CLIENTES
+SELECT
+ 	code,
+    name,
+    sum(population) as total
+from country
+where code in ('BRA', 'USA')
+group by code;
+
+-- AGRUPANDO MULTIPLAS TABELAS
+select
+ 	cus.customer_id,
+    cus.first_name,
+    cus.last_name,
+    sum(amount) as total
+from payment
+join customer cus using (customer_id)
+group by customer_id
+order by total desc;
+
+-- FILTRO HAVING
+select
+ 	cus.customer_id,
+    cus.first_name,
+    cus.last_name,
+    sum(amount) as total,
+    count(amount) as compras
+from payment
+join customer cus using (customer_id)
+group by customer_id
+having total >= 150 and compras >= 38 -- SUBSTITUI O WHERE, UTILIZADO APÓS O GROUP BY!!!!
+order by total ASC;
+
+-- SUBQUERIES
+select *
+from payment
+where amount = (
+ 	select max(amount)
+ 	from payment
+ 	where customer_id = 1
+);
+
+-- OPERADOR IN NAS SUBQUERIES
+select *
+from customer
+where customer_id in (
+ 		select
+ 		 customer_id
+ 	from payment
+ 	group by customer_id
+    having count(*) > 35
+);
+
+-- CRIANDO VIEWS
+create view despesa_total_cliente as -- ESTE COMANDO!!
+select
+ 	pay.customer_id,
+ 	sum(pay.amount) as total_amount,
+ 	cus.first_name,
+ 	cus.last_name
+from payment pay
+join customer cus on pay.customer_id = cus.customer_id
+group by pay.customer_id, cus.first_name, cus.last_name;
+
+-- CRIAR UMA NOVA TABELA
+create table marcas (
+ 	id int not null auto_increment,
+ 	nome_marca varchar (255) not null,
+ 	primary key (id)
+);
+
+-- INSERIR NOVA COLUNA CORRETAMENTE: ALTER TABLE
+alter table marcas add origem varchar (255);
+
+-- CRIANDO UMA FOREIGN KEY
+CREATE TABLE inventario (
+ 	id int not null auto_increment,
+    modelo varchar (255) not null,
+    trasnmissão varchar (255) not null,
+    motor varchar (100) not null,
+    combustivel varchar (255) not null,
+    marcas_id int not null, -- CRIAÇÃO DE UMA CHAVE ESTRANGEIRA PARA CONECTAR COM A TABELA DE 'MARCAS'
+    primary key (id),
+    foreign key (marcas_id) references marcas(id) -- COMANDO E LIGAÇÃO COM A TABELA 'MARCAS'
+);
+
+-- MUDAR APENAS UMA LINHA DE UMA TABELA:
+update clientes -- tabela
+set endereco = 'Rua 5' -- linha com dado alterado
+where id = 5; -- identificação da onde esta sendo atualizado
